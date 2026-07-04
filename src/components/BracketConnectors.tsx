@@ -13,9 +13,11 @@ interface Line {
 export function BracketConnectors({
   matches,
   containerRef,
+  layout,
 }: {
   matches: MatchWithTeams[];
   containerRef: RefObject<HTMLDivElement | null>;
+  layout: string;
 }) {
   const [lines, setLines] = useState<Line[]>([]);
   const [size, setSize] = useState({ width: 0, height: 0 });
@@ -51,15 +53,23 @@ export function BracketConnectors({
       setSize({ width: container.scrollWidth, height: container.scrollHeight });
     }
 
+    // Recompute after layout settles (fonts, reflow) and on the next frame,
+    // so a Linear<->Wallchart toggle doesn't leave stale line positions.
     compute();
+    const raf = requestAnimationFrame(compute);
+
     const observer = new ResizeObserver(compute);
     observer.observe(container);
+    // Observe the inner content too, so column reflow on layout toggle is caught.
+    const inner = container.firstElementChild;
+    if (inner) observer.observe(inner);
     window.addEventListener("resize", compute);
     return () => {
+      cancelAnimationFrame(raf);
       observer.disconnect();
       window.removeEventListener("resize", compute);
     };
-  }, [matches, containerRef]);
+  }, [matches, containerRef, layout]);
 
   if (size.width === 0) return null;
 
@@ -69,19 +79,37 @@ export function BracketConnectors({
       style={{ width: size.width, height: size.height }}
     >
       <defs>
-        <marker id="bracket-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-          <path d="M0,0 L10,5 L0,10 z" className="fill-gold/70" />
+        <marker id="bracket-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" className="fill-gold" />
         </marker>
       </defs>
       {lines.map((l, i) => {
+        // Classic squared bracket elbow: out horizontally to the midpoint,
+        // vertically to align with the target, then horizontally into it.
         const midX = (l.x1 + l.x2) / 2;
-        const path = `M ${l.x1} ${l.y1} C ${midX} ${l.y1}, ${midX} ${l.y2}, ${l.x2} ${l.y2}`;
+        const r = Math.min(8, Math.abs(l.y2 - l.y1) / 2, Math.abs(midX - l.x1));
+        const goingRight = l.x2 >= l.x1;
+        const dir = goingRight ? 1 : -1;
+        const down = l.y2 >= l.y1 ? 1 : -1;
+
+        // Rounded corners at the two bends for a cleaner look.
+        const path =
+          r > 1
+            ? `M ${l.x1} ${l.y1} ` +
+              `H ${midX - r * dir} ` +
+              `Q ${midX} ${l.y1} ${midX} ${l.y1 + r * down} ` +
+              `V ${l.y2 - r * down} ` +
+              `Q ${midX} ${l.y2} ${midX + r * dir} ${l.y2} ` +
+              `H ${l.x2}`
+            : `M ${l.x1} ${l.y1} H ${midX} V ${l.y2} H ${l.x2}`;
+
         return (
           <path
             key={i}
             d={path}
-            className="stroke-gold/40"
-            strokeWidth={1.5}
+            className="stroke-gold/70"
+            strokeWidth={2}
+            strokeLinejoin="round"
             fill="none"
             markerEnd="url(#bracket-arrow)"
           />

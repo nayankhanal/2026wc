@@ -131,7 +131,7 @@ export function BracketView({ matches }: { matches: MatchWithTeams[] }) {
 
       <div ref={containerRef} className="relative overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0">
         {layout === "linear" ? <LinearLayout matches={matches} /> : <MirroredLayout matches={matches} />}
-        <BracketConnectors matches={matches} containerRef={containerRef} />
+        <BracketConnectors matches={matches} containerRef={containerRef} layout={layout} />
       </div>
     </div>
   );
