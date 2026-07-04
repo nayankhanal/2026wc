@@ -1,4 +1,5 @@
 import { BracketView } from "@/components/BracketView";
+import { AutoRefresh } from "@/components/AutoRefresh";
 import { getAllMatches } from "@/lib/data";
 
 export const revalidate = 0;
@@ -15,6 +16,7 @@ export default async function BracketPage() {
         Auto-advances as results come in — scroll to see the full bracket through the final.
       </p>
       <BracketView matches={matches} />
+      <AutoRefresh />
     </div>
   );
 }

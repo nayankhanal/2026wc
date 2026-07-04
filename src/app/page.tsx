@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CountdownBanner } from "@/components/CountdownBanner";
+import { AutoRefresh } from "@/components/AutoRefresh";
 import { buttonVariants } from "@/components/ui/button";
 import { getAllMatches } from "@/lib/data";
 import { MatchCard } from "@/components/MatchCard";
@@ -62,6 +63,7 @@ export default async function Home() {
           </div>
         </div>
       )}
+      <AutoRefresh />
     </div>
   );
 }

@@ -1,0 +1,20 @@
+name: Sync World Cup results
+
+# Pulls the latest scores from football-data.org into the app every 10 minutes.
+# Requires two repo secrets:
+#   APP_URL     - the deployed base URL, e.g. https://your-app.vercel.app
+#   CRON_SECRET - the same value set in the app's environment variables
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call sync endpoint
+        run: |
+          curl --fail --silent --show-error \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ secrets.APP_URL }}/api/sync"

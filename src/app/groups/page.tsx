@@ -1,4 +1,5 @@
 import { GroupTable } from "@/components/GroupTable";
+import { AutoRefresh } from "@/components/AutoRefresh";
 import { getAllMatches, getGroupsWithTeams } from "@/lib/data";
 import { computeGroupStandings } from "@/lib/standings";
 
@@ -24,6 +25,7 @@ export default async function GroupsPage() {
           />
         ))}
       </div>
+      <AutoRefresh />
     </div>
   );
 }

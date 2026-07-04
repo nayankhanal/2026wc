@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { createSessionToken, SESSION_COOKIE_NAME } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { propagateWinner } from "@/lib/bracket";
+import { syncFromFootballData } from "@/lib/sync";
 import type { Match, MatchStatus } from "@/types/db";
 
 export async function login(_prevState: { error?: string } | undefined, formData: FormData) {
@@ -61,5 +62,15 @@ export async function updateMatchResult(formData: FormData) {
 
   revalidatePath("/groups");
   revalidatePath("/bracket");
+  revalidatePath("/admin");
+}
+
+export async function syncNow() {
+  const report = await syncFromFootballData();
+  if (report.updated > 0) {
+    revalidatePath("/");
+    revalidatePath("/groups");
+    revalidatePath("/bracket");
+  }
   revalidatePath("/admin");
 }
