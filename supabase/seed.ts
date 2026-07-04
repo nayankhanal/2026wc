@@ -236,8 +236,8 @@ const KNOCKOUT: KnockoutSeed[] = [
   { matchNumber: 101, stage: "sf", date: "2026-07-14", venue: "AT&T Stadium, Arlington", homeSource: "Winner Match 97", awaySource: "Winner Match 98", nextMatchNumber: 104, nextSlot: "home" },
   { matchNumber: 102, stage: "sf", date: "2026-07-15", venue: null, homeSource: "Winner Match 99", awaySource: "Winner Match 100", nextMatchNumber: 104, nextSlot: "away" },
 
-  // Third place (103) - not auto-populated (would need loser propagation, out of scope for MVP).
-  { matchNumber: 103, stage: "third_place", date: "2026-07-18", venue: "Hard Rock Stadium, Miami Gardens", homeSource: "Loser Match 101", awaySource: "Loser Match 102", nextMatchNumber: null, nextSlot: null },
+  // Third place (103) - not auto-populated (would need runner-up propagation, out of scope for MVP).
+  { matchNumber: 103, stage: "third_place", date: "2026-07-18", venue: "Hard Rock Stadium, Miami Gardens", homeSource: "Runner-up Match 101", awaySource: "Runner-up Match 102", nextMatchNumber: null, nextSlot: null },
 
   // Final (104)
   { matchNumber: 104, stage: "final", date: "2026-07-19", venue: "MetLife Stadium, East Rutherford", homeSource: "Winner Match 101", awaySource: "Winner Match 102", nextMatchNumber: null, nextSlot: null },
