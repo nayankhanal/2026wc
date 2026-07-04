@@ -23,11 +23,22 @@ export function BracketConnectors({
   const [size, setSize] = useState({ width: 0, height: 0 });
 
   useLayoutEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+    const timeouts: ReturnType<typeof setTimeout>[] = [];
+    let observer: ResizeObserver | null = null;
+    let observing = false;
 
     function compute() {
+      const container = containerRef.current;
       if (!container) return;
+
+      // Attach observers once the container is available.
+      if (observer && !observing) {
+        observer.observe(container);
+        const inner = container.firstElementChild;
+        if (inner) observer.observe(inner);
+        observing = true;
+      }
+
       const containerRect = container.getBoundingClientRect();
       const newLines: Line[] = [];
 
@@ -53,20 +64,18 @@ export function BracketConnectors({
       setSize({ width: container.scrollWidth, height: container.scrollHeight });
     }
 
-    // Recompute after layout settles (fonts, reflow) and on the next frame,
-    // so a Linear<->Wallchart toggle doesn't leave stale line positions.
+    observer = new ResizeObserver(compute);
+    // containerRef belongs to the parent, so it may not be attached during this
+    // child's first layout effect. Try synchronously, then a few times after
+    // paint/reflow. setTimeout (not rAF) so it still fires in a background tab.
     compute();
-    const raf = requestAnimationFrame(compute);
-
-    const observer = new ResizeObserver(compute);
-    observer.observe(container);
-    // Observe the inner content too, so column reflow on layout toggle is caught.
-    const inner = container.firstElementChild;
-    if (inner) observer.observe(inner);
+    timeouts.push(setTimeout(compute, 0));
+    timeouts.push(setTimeout(compute, 100));
+    timeouts.push(setTimeout(compute, 400));
     window.addEventListener("resize", compute);
     return () => {
-      cancelAnimationFrame(raf);
-      observer.disconnect();
+      timeouts.forEach(clearTimeout);
+      observer?.disconnect();
       window.removeEventListener("resize", compute);
     };
   }, [matches, containerRef, layout]);

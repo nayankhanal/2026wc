@@ -186,6 +186,9 @@ interface KnockoutSeed {
   away?: string;
   homeScore?: number;
   awayScore?: number;
+  homePen?: number; // penalty shootout score, when a knockout tie went to pens
+  awayPen?: number;
+  live?: boolean; // currently in progress
   homeSource: string; // shown until resolved
   awaySource: string;
   nextMatchNumber: number | null;
@@ -193,33 +196,35 @@ interface KnockoutSeed {
 }
 
 const KNOCKOUT: KnockoutSeed[] = [
-  // Round of 32 (73-88) - seeded where corroborated; scoreless ones still TBD for admin to confirm.
+  // Round of 32 (73-88) - real results. Colombia vs Ghana (85) is live as of Jul 3-4.
+  // next_match linkage reflects the actual FIFA bracket (verified from R16 matchups).
   { matchNumber: 73, stage: "r32", date: "2026-06-28", venue: "SoFi Stadium, Inglewood", home: "Canada", away: "South Africa", homeScore: 1, awayScore: 0, homeSource: "Winner Group B", awaySource: "Runner-up Group A", nextMatchNumber: 89, nextSlot: "home" },
-  { matchNumber: 74, stage: "r32", date: "2026-06-29", venue: "NRG Stadium, Houston", home: "Brazil", away: "Japan", homeScore: 2, awayScore: 1, homeSource: "Winner Group C", awaySource: "Runner-up Group F", nextMatchNumber: 89, nextSlot: "away" },
-  { matchNumber: 75, stage: "r32", date: "2026-06-29", venue: "Estadio BBVA, Guadalupe", home: "Netherlands", away: "Morocco", homeScore: 1, awayScore: 1, homeSource: "Winner Group F", awaySource: "Runner-up Group C", nextMatchNumber: 90, nextSlot: "home" },
-  { matchNumber: 76, stage: "r32", date: "2026-06-30", venue: null, home: "Spain", away: "Austria", homeSource: "Winner Group H", awaySource: "Runner-up Group J", nextMatchNumber: 90, nextSlot: "away" },
-  { matchNumber: 77, stage: "r32", date: "2026-06-30", venue: null, home: "Côte d'Ivoire", away: "Norway", homeScore: 1, awayScore: 2, homeSource: "Runner-up Group E", awaySource: "Winner Group I", nextMatchNumber: 91, nextSlot: "home" },
-  { matchNumber: 78, stage: "r32", date: null, venue: null, homeSource: "Winner Group A (Mexico)", awaySource: "3rd-place qualifier", nextMatchNumber: 91, nextSlot: "away" },
-  { matchNumber: 79, stage: "r32", date: "2026-06-29", venue: "Gillette Stadium, Foxborough", home: "Germany", away: "Paraguay", homeScore: 1, awayScore: 1, homeSource: "Winner Group E", awaySource: "3rd-place qualifier", nextMatchNumber: 92, nextSlot: "home" },
-  { matchNumber: 80, stage: "r32", date: "2026-07-01", venue: null, home: "England", away: "DR Congo", homeSource: "Winner Group L", awaySource: "Runner-up Group K", nextMatchNumber: 92, nextSlot: "away" },
-  { matchNumber: 81, stage: "r32", date: "2026-07-01", venue: null, home: "United States", away: "Bosnia and Herzegovina", homeSource: "Winner Group D", awaySource: "Runner-up Group B", nextMatchNumber: 93, nextSlot: "home" },
-  { matchNumber: 82, stage: "r32", date: "2026-07-01", venue: null, home: "Belgium", away: "Senegal", homeSource: "Winner Group G", awaySource: "Runner-up Group I", nextMatchNumber: 93, nextSlot: "away" },
-  { matchNumber: 83, stage: "r32", date: "2026-07-02", venue: null, home: "Portugal", away: "Croatia", homeSource: "Winner Group K", awaySource: "Runner-up Group L", nextMatchNumber: 94, nextSlot: "home" },
-  { matchNumber: 84, stage: "r32", date: "2026-07-02", venue: null, home: "Switzerland", away: "Algeria", homeSource: "Runner-up Group B", awaySource: "Runner-up Group J", nextMatchNumber: 94, nextSlot: "away" },
-  { matchNumber: 85, stage: "r32", date: "2026-07-03", venue: null, home: "Colombia", away: "Ghana", homeSource: "Winner Group K", awaySource: "Runner-up Group L", nextMatchNumber: 95, nextSlot: "home" },
-  { matchNumber: 86, stage: "r32", date: "2026-07-03", venue: null, home: "Egypt", away: "Australia", homeSource: "Winner Group G", awaySource: "Runner-up Group D", nextMatchNumber: 95, nextSlot: "away" },
-  { matchNumber: 87, stage: "r32", date: null, venue: null, home: "France", away: "Sweden", homeSource: "Winner Group I", awaySource: "3rd-place qualifier", nextMatchNumber: 96, nextSlot: "home" },
-  { matchNumber: 88, stage: "r32", date: null, venue: null, homeSource: "Winner Group J (Argentina)", awaySource: "3rd-place qualifier", nextMatchNumber: 96, nextSlot: "away" },
+  { matchNumber: 74, stage: "r32", date: "2026-06-29", venue: "NRG Stadium, Houston", home: "Brazil", away: "Japan", homeScore: 2, awayScore: 1, homeSource: "Winner Group C", awaySource: "Runner-up Group F", nextMatchNumber: 91, nextSlot: "home" },
+  { matchNumber: 75, stage: "r32", date: "2026-06-29", venue: "Estadio BBVA, Guadalupe", home: "Netherlands", away: "Morocco", homeScore: 1, awayScore: 1, homePen: 2, awayPen: 3, homeSource: "Winner Group F", awaySource: "Runner-up Group C", nextMatchNumber: 89, nextSlot: "away" },
+  { matchNumber: 76, stage: "r32", date: "2026-06-27", venue: "SoFi Stadium, Inglewood", home: "Spain", away: "Austria", homeScore: 3, awayScore: 0, homeSource: "Winner Group H", awaySource: "Runner-up Group J", nextMatchNumber: 93, nextSlot: "away" },
+  { matchNumber: 77, stage: "r32", date: "2026-06-30", venue: "AT&T Stadium, Arlington", home: "Côte d'Ivoire", away: "Norway", homeScore: 1, awayScore: 2, homeSource: "Runner-up Group E", awaySource: "Winner Group I", nextMatchNumber: 91, nextSlot: "away" },
+  { matchNumber: 78, stage: "r32", date: "2026-06-30", venue: "Estadio Azteca, Mexico City", home: "Mexico", away: "Ecuador", homeScore: 2, awayScore: 0, homeSource: "Winner Group A", awaySource: "3rd-place qualifier", nextMatchNumber: 92, nextSlot: "home" },
+  { matchNumber: 79, stage: "r32", date: "2026-06-29", venue: "Gillette Stadium, Foxborough", home: "Germany", away: "Paraguay", homeScore: 1, awayScore: 1, homePen: 3, awayPen: 4, homeSource: "Winner Group E", awaySource: "3rd-place qualifier", nextMatchNumber: 90, nextSlot: "home" },
+  { matchNumber: 80, stage: "r32", date: "2026-07-01", venue: "Mercedes-Benz Stadium, Atlanta", home: "England", away: "DR Congo", homeScore: 2, awayScore: 1, homeSource: "Winner Group L", awaySource: "Runner-up Group K", nextMatchNumber: 92, nextSlot: "away" },
+  { matchNumber: 81, stage: "r32", date: "2026-07-01", venue: "Levi's Stadium, Santa Clara", home: "United States", away: "Bosnia and Herzegovina", homeScore: 2, awayScore: 0, homeSource: "Winner Group D", awaySource: "Runner-up Group B", nextMatchNumber: 94, nextSlot: "home" },
+  { matchNumber: 82, stage: "r32", date: "2026-07-01", venue: "Lumen Field, Seattle", home: "Belgium", away: "Senegal", homeScore: 3, awayScore: 2, homeSource: "Winner Group G", awaySource: "Runner-up Group I", nextMatchNumber: 94, nextSlot: "away" },
+  { matchNumber: 83, stage: "r32", date: "2026-06-27", venue: "BMO Field, Toronto", home: "Portugal", away: "Croatia", homeScore: 2, awayScore: 1, homeSource: "Winner Group K", awaySource: "Runner-up Group L", nextMatchNumber: 93, nextSlot: "home" },
+  { matchNumber: 84, stage: "r32", date: "2026-06-27", venue: "BC Place, Vancouver", home: "Switzerland", away: "Algeria", homeScore: 2, awayScore: 0, homeSource: "Runner-up Group B", awaySource: "Runner-up Group J", nextMatchNumber: 96, nextSlot: "home" },
+  { matchNumber: 85, stage: "r32", date: "2026-07-03", venue: "Hard Rock Stadium, Miami Gardens", home: "Colombia", away: "Ghana", live: true, homeSource: "Winner Group K", awaySource: "Runner-up Group L", nextMatchNumber: 96, nextSlot: "away" },
+  { matchNumber: 86, stage: "r32", date: "2026-07-03", venue: "AT&T Stadium, Arlington", home: "Egypt", away: "Australia", homeScore: 1, awayScore: 1, homePen: 4, awayPen: 2, homeSource: "Winner Group G", awaySource: "Runner-up Group D", nextMatchNumber: 95, nextSlot: "away" },
+  { matchNumber: 87, stage: "r32", date: "2026-06-30", venue: "MetLife Stadium, East Rutherford", home: "France", away: "Sweden", homeScore: 3, awayScore: 0, homeSource: "Winner Group I", awaySource: "3rd-place qualifier", nextMatchNumber: 90, nextSlot: "away" },
+  { matchNumber: 88, stage: "r32", date: "2026-07-02", venue: "Mercedes-Benz Stadium, Atlanta", home: "Argentina", away: "Cabo Verde", homeScore: 3, awayScore: 2, homeSource: "Winner Group J", awaySource: "3rd-place qualifier", nextMatchNumber: 95, nextSlot: "home" },
 
-  // Round of 16 (89-96) - schedule skeleton only; teams auto-fill once R32 results are confirmed.
-  { matchNumber: 89, stage: "r16", date: "2026-07-04", venue: "NRG Stadium, Houston", homeSource: "Winner Match 73", awaySource: "Winner Match 74", nextMatchNumber: 97, nextSlot: "home" },
-  { matchNumber: 90, stage: "r16", date: "2026-07-04", venue: null, homeSource: "Winner Match 75", awaySource: "Winner Match 76", nextMatchNumber: 97, nextSlot: "away" },
-  { matchNumber: 91, stage: "r16", date: "2026-07-05", venue: "MetLife Stadium, East Rutherford", homeSource: "Winner Match 77", awaySource: "Winner Match 78", nextMatchNumber: 98, nextSlot: "home" },
-  { matchNumber: 92, stage: "r16", date: "2026-07-05", venue: "Estadio Azteca, Mexico City", homeSource: "Winner Match 79", awaySource: "Winner Match 80", nextMatchNumber: 98, nextSlot: "away" },
-  { matchNumber: 93, stage: "r16", date: "2026-07-06", venue: null, homeSource: "Winner Match 81", awaySource: "Winner Match 82", nextMatchNumber: 99, nextSlot: "home" },
-  { matchNumber: 94, stage: "r16", date: "2026-07-06", venue: "Lumen Field, Seattle", homeSource: "Winner Match 83", awaySource: "Winner Match 84", nextMatchNumber: 99, nextSlot: "away" },
-  { matchNumber: 95, stage: "r16", date: "2026-07-06", venue: "AT&T Stadium, Arlington", homeSource: "Winner Match 85", awaySource: "Winner Match 86", nextMatchNumber: 100, nextSlot: "home" },
-  { matchNumber: 96, stage: "r16", date: "2026-07-07", venue: "BC Place, Vancouver", homeSource: "Winner Match 87", awaySource: "Winner Match 88", nextMatchNumber: 100, nextSlot: "away" },
+  // Round of 16 (89-96) - actual matchups. Winners pre-filled; the Colombia/Ghana
+  // slot in match 96 stays a placeholder until that R32 tie finishes.
+  { matchNumber: 89, stage: "r16", date: "2026-07-04", venue: "NRG Stadium, Houston", home: "Canada", away: "Morocco", homeSource: "Winner Match 73", awaySource: "Winner Match 75", nextMatchNumber: 97, nextSlot: "home" },
+  { matchNumber: 90, stage: "r16", date: "2026-07-04", venue: "Lincoln Financial Field, Philadelphia", home: "Paraguay", away: "France", homeSource: "Winner Match 79", awaySource: "Winner Match 87", nextMatchNumber: 97, nextSlot: "away" },
+  { matchNumber: 91, stage: "r16", date: "2026-07-05", venue: "MetLife Stadium, East Rutherford", home: "Brazil", away: "Norway", homeSource: "Winner Match 74", awaySource: "Winner Match 77", nextMatchNumber: 98, nextSlot: "home" },
+  { matchNumber: 92, stage: "r16", date: "2026-07-05", venue: "Estadio Azteca, Mexico City", home: "Mexico", away: "England", homeSource: "Winner Match 78", awaySource: "Winner Match 80", nextMatchNumber: 98, nextSlot: "away" },
+  { matchNumber: 93, stage: "r16", date: "2026-07-06", venue: "AT&T Stadium, Arlington", home: "Portugal", away: "Spain", homeSource: "Winner Match 83", awaySource: "Winner Match 76", nextMatchNumber: 99, nextSlot: "home" },
+  { matchNumber: 94, stage: "r16", date: "2026-07-06", venue: "Lumen Field, Seattle", home: "United States", away: "Belgium", homeSource: "Winner Match 81", awaySource: "Winner Match 82", nextMatchNumber: 99, nextSlot: "away" },
+  { matchNumber: 95, stage: "r16", date: "2026-07-07", venue: "Mercedes-Benz Stadium, Atlanta", home: "Argentina", away: "Egypt", homeSource: "Winner Match 88", awaySource: "Winner Match 86", nextMatchNumber: 100, nextSlot: "home" },
+  { matchNumber: 96, stage: "r16", date: "2026-07-07", venue: "BC Place, Vancouver", home: "Switzerland", awaySource: "Winner Match 85", homeSource: "Winner Match 84", nextMatchNumber: 100, nextSlot: "away" },
 
   // Quarterfinals (97-100)
   { matchNumber: 97, stage: "qf", date: "2026-07-09", venue: "Gillette Stadium, Foxborough", homeSource: "Winner Match 89", awaySource: "Winner Match 90", nextMatchNumber: 101, nextSlot: "home" },
@@ -239,6 +244,14 @@ const KNOCKOUT: KnockoutSeed[] = [
 ];
 
 async function main() {
+  // Clear existing data so this script is safe to re-run as results come in.
+  // Order matters: matches reference teams/groups, and self-reference via next_match_id.
+  console.log("Clearing existing data...");
+  await db.from("matches").update({ next_match_id: null }).not("id", "is", null);
+  await db.from("matches").delete().not("id", "is", null);
+  await db.from("teams").delete().not("id", "is", null);
+  await db.from("groups").delete().not("id", "is", null);
+
   console.log("Seeding groups...");
   const groupIdByName = new Map<string, number>();
   for (const name of GROUPS) {
@@ -280,7 +293,11 @@ async function main() {
   console.log("Seeding knockout stage...");
   const matchIdByNumber = new Map<number, number>();
   for (const m of KNOCKOUT) {
-    const status = m.homeScore != null && m.awayScore != null ? "finished" : "scheduled";
+    const status = m.live
+      ? "live"
+      : m.homeScore != null && m.awayScore != null
+        ? "finished"
+        : "scheduled";
     const { data, error } = await db
       .from("matches")
       .insert({
@@ -292,6 +309,8 @@ async function main() {
         away_source: m.awaySource,
         home_score: m.homeScore ?? null,
         away_score: m.awayScore ?? null,
+        home_pen: m.homePen ?? null,
+        away_pen: m.awayPen ?? null,
         status,
         kickoff_at: m.date ? `${m.date}T00:00:00Z` : null,
         venue: m.venue,

@@ -52,21 +52,38 @@ export default function RootLayout({
                 <Link href="/bracket" className="px-3 py-2 rounded-md hover:bg-accent transition-colors">
                   Bracket
                 </Link>
-                <Link
-                  href="/admin"
-                  className="px-3 py-2 rounded-md hover:bg-accent transition-colors text-muted-foreground"
-                >
-                  Admin
-                </Link>
                 <ThemeToggle />
               </nav>
             </div>
           </header>
           <main className="flex-1">{children}</main>
           <footer className="border-t border-border/60 mt-16">
-            <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8 text-sm text-muted-foreground flex flex-col sm:flex-row gap-2 sm:justify-between">
+            <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8 text-sm text-muted-foreground flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <span>Unofficial fan-made wallchart. Not affiliated with FIFA.</span>
-              <span>USA · Canada · Mexico 2026</span>
+              <div className="flex flex-col sm:items-end gap-1">
+                <span>
+                  Powered by{" "}
+                  <a
+                    href="https://zuvior.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gold font-medium hover:underline"
+                  >
+                    Zuvior
+                  </a>
+                </span>
+                <span className="text-xs">
+                  Built by{" "}
+                  <a
+                    href="https://www.linkedin.com/in/nayan-khanal-4505921ba/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-foreground hover:underline"
+                  >
+                    Nayan Khanal
+                  </a>
+                </span>
+              </div>
             </div>
           </footer>
         </ThemeProvider>

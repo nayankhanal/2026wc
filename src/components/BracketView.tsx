@@ -18,8 +18,8 @@ const STAGE_LABEL: Record<MatchStage, string> = {
 
 // The 2026 format's match numbering splits cleanly into two bracket halves,
 // each feeding one semifinal, which is what makes the mirrored layout possible.
-const LEFT_NUMBERS = new Set([73, 74, 75, 76, 77, 78, 79, 80, 89, 90, 91, 92, 97, 98, 101]);
-const RIGHT_NUMBERS = new Set([81, 82, 83, 84, 85, 86, 87, 88, 93, 94, 95, 96, 99, 100, 102]);
+const LEFT_NUMBERS = new Set([73, 74, 75, 77, 78, 79, 80, 87, 89, 90, 91, 92, 97, 98, 101]);
+const RIGHT_NUMBERS = new Set([76, 81, 82, 83, 84, 85, 86, 88, 93, 94, 95, 96, 99, 100, 102]);
 
 function Column({ title, matches }: { title: string; matches: MatchWithTeams[] }) {
   return (
