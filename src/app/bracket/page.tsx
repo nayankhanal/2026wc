@@ -2,6 +2,7 @@ import { BracketView } from "@/components/BracketView";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { getAllMatches } from "@/lib/data";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function BracketPage() {

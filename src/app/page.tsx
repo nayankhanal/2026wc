@@ -5,6 +5,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { getAllMatches } from "@/lib/data";
 import { MatchCard } from "@/components/MatchCard";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function Home() {
