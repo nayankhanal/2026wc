@@ -4,6 +4,7 @@ import { propagateWinner } from "./bracket";
 import {
   fetchWorldCupMatches,
   buildTeamResolver,
+  extractResult,
   mapStatus,
   mapStage,
   type TeamRow,
@@ -83,16 +84,13 @@ export async function syncFromFootballData(): Promise<SyncReport> {
     const our = candidates[0];
 
     const sameOrientation = our.home_team_id === homeId;
-    const fh = fd.score.fullTime.home;
-    const fa = fd.score.fullTime.away;
-    const ph = fd.score.penalties?.home ?? null;
-    const pa = fd.score.penalties?.away ?? null;
+    const { home, away, homePen, awayPen } = extractResult(fd);
 
     const update = {
-      home_score: sameOrientation ? fh : fa,
-      away_score: sameOrientation ? fa : fh,
-      home_pen: sameOrientation ? ph : pa,
-      away_pen: sameOrientation ? pa : ph,
+      home_score: sameOrientation ? home : away,
+      away_score: sameOrientation ? away : home,
+      home_pen: sameOrientation ? homePen : awayPen,
+      away_pen: sameOrientation ? awayPen : homePen,
       status,
     };
 

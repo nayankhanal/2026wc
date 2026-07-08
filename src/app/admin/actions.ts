@@ -42,11 +42,19 @@ export async function updateMatchResult(formData: FormData) {
   const awayPenRaw = formData.get("away_pen");
   const status = formData.get("status") as MatchStatus;
 
+  const homeScore = homeScoreRaw !== null && homeScoreRaw !== "" ? Number(homeScoreRaw) : null;
+  const awayScore = awayScoreRaw !== null && awayScoreRaw !== "" ? Number(awayScoreRaw) : null;
+  // Penalties only matter on a level score; drop them otherwise so a decisive
+  // result never shows a stale shootout score on the bracket.
+  const isDraw = homeScore != null && awayScore != null && homeScore === awayScore;
+  const homePen = isDraw && homePenRaw !== null && homePenRaw !== "" ? Number(homePenRaw) : null;
+  const awayPen = isDraw && awayPenRaw !== null && awayPenRaw !== "" ? Number(awayPenRaw) : null;
+
   const update = {
-    home_score: homeScoreRaw ? Number(homeScoreRaw) : null,
-    away_score: awayScoreRaw ? Number(awayScoreRaw) : null,
-    home_pen: homePenRaw ? Number(homePenRaw) : null,
-    away_pen: awayPenRaw ? Number(awayPenRaw) : null,
+    home_score: homeScore,
+    away_score: awayScore,
+    home_pen: homePen,
+    away_pen: awayPen,
     status,
   };
 
