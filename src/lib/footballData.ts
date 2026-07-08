@@ -10,6 +10,11 @@ export interface FdTeam {
   tla: string | null;
 }
 
+interface Side {
+  home: number | null;
+  away: number | null;
+}
+
 export interface FdMatch {
   id: number;
   utcDate: string;
@@ -20,9 +25,51 @@ export interface FdMatch {
   awayTeam: FdTeam;
   score: {
     winner: string | null;
-    fullTime: { home: number | null; away: number | null };
-    penalties?: { home: number | null; away: number | null } | null;
+    duration?: string; // REGULAR | EXTRA_TIME | PENALTY_SHOOTOUT
+    fullTime: Side; // includes shootout goals for penalty deciders
+    regularTime?: Side | null; // 90-minute score
+    extraTime?: Side | null; // extra-time-only goals
+    penalties?: Side | null; // unreliable mid-shootout snapshot; do not use directly
   };
+}
+
+/**
+ * Recover the true match result from football-data's score object.
+ *
+ * `fullTime` bakes shootout goals in (a 0-0 won 4-3 on pens reports as 4-3), and
+ * the `penalties` field is an unreliable mid-shootout snapshot. So we take the
+ * real score from regularTime (+extraTime) and derive the shootout as the leftover
+ * between fullTime and that score. Returns values in the API's home/away order.
+ */
+export function extractResult(fd: FdMatch): {
+  home: number | null;
+  away: number | null;
+  homePen: number | null;
+  awayPen: number | null;
+} {
+  const s = fd.score;
+  const rt = s.regularTime;
+  const et = s.extraTime;
+  const ft = s.fullTime;
+
+  let home: number | null;
+  let away: number | null;
+  if (rt && rt.home != null && rt.away != null) {
+    home = rt.home + (et?.home ?? 0);
+    away = rt.away + (et?.away ?? 0);
+  } else {
+    home = ft?.home ?? null;
+    away = ft?.away ?? null;
+  }
+
+  let homePen: number | null = null;
+  let awayPen: number | null = null;
+  if (s.duration === "PENALTY_SHOOTOUT" && ft?.home != null && ft?.away != null && home != null && away != null) {
+    homePen = ft.home - home;
+    awayPen = ft.away - away;
+  }
+
+  return { home, away, homePen, awayPen };
 }
 
 export async function fetchWorldCupMatches(apiKey: string): Promise<FdMatch[]> {

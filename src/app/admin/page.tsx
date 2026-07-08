@@ -18,48 +18,98 @@ const STAGE_LABEL: Record<string, string> = {
 };
 
 function MatchRow({ match }: { match: MatchWithTeams }) {
+  const disabled = !match.home_team_id || !match.away_team_id;
+  const isKnockout = match.stage !== "group";
+  const isDraw =
+    match.home_score != null && match.away_score != null && match.home_score === match.away_score;
+
   return (
     <form
       action={updateMatchResult}
-      className="grid grid-cols-[1fr_auto_1fr_auto_auto_auto] sm:grid-cols-[1fr_1fr_auto_auto_auto_auto] items-center gap-2 sm:gap-3 py-2 px-3 rounded-md odd:bg-card/50"
+      className="flex items-center justify-between gap-3 py-2 px-3 rounded-md odd:bg-card/50"
     >
       <input type="hidden" name="id" value={match.id} />
-      <div className="flex items-center gap-2 min-w-0 text-sm">
-        {match.home_team ? <FlagIcon code={match.home_team.flag_code} className="w-5 h-3.5 shrink-0" /> : null}
-        <span className="truncate">{match.home_team?.name ?? match.home_source ?? "TBD"}</span>
+
+      <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+        {/* Home row */}
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 min-w-0 flex-1 text-sm">
+            {match.home_team ? <FlagIcon code={match.home_team.flag_code} className="w-5 h-3.5 shrink-0" /> : null}
+            <span className="truncate">{match.home_team?.name ?? match.home_source ?? "TBD"}</span>
+          </div>
+          <Input
+            name="home_score"
+            type="number"
+            min={0}
+            defaultValue={match.home_score ?? ""}
+            className="w-12 h-8"
+            disabled={disabled}
+            aria-label="Home score"
+          />
+          {isKnockout ? (
+            <Input
+              name="home_pen"
+              type="number"
+              min={0}
+              placeholder="pen"
+              defaultValue={match.home_pen ?? ""}
+              className="w-12 h-8 text-muted-foreground"
+              disabled={disabled}
+              title="Home penalty shootout score (only if the match went to penalties)"
+              aria-label="Home penalties"
+            />
+          ) : null}
+        </div>
+
+        {/* Away row */}
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 min-w-0 flex-1 text-sm">
+            {match.away_team ? <FlagIcon code={match.away_team.flag_code} className="w-5 h-3.5 shrink-0" /> : null}
+            <span className="truncate">{match.away_team?.name ?? match.away_source ?? "TBD"}</span>
+          </div>
+          <Input
+            name="away_score"
+            type="number"
+            min={0}
+            defaultValue={match.away_score ?? ""}
+            className="w-12 h-8"
+            disabled={disabled}
+            aria-label="Away score"
+          />
+          {isKnockout ? (
+            <Input
+              name="away_pen"
+              type="number"
+              min={0}
+              placeholder="pen"
+              defaultValue={match.away_pen ?? ""}
+              className="w-12 h-8 text-muted-foreground"
+              disabled={disabled}
+              title="Away penalty shootout score (only if the match went to penalties)"
+              aria-label="Away penalties"
+            />
+          ) : null}
+        </div>
+
+        {isKnockout && isDraw && match.status === "finished" ? (
+          <p className="text-[11px] text-gold">Level score — enter penalty scores to set who advances.</p>
+        ) : null}
       </div>
-      <div className="flex items-center gap-2 min-w-0 text-sm">
-        {match.away_team ? <FlagIcon code={match.away_team.flag_code} className="w-5 h-3.5 shrink-0" /> : null}
-        <span className="truncate">{match.away_team?.name ?? match.away_source ?? "TBD"}</span>
+
+      <div className="flex flex-col gap-1 shrink-0">
+        <select
+          name="status"
+          defaultValue={match.status}
+          className="h-8 rounded-md border border-input bg-transparent px-2 text-xs"
+        >
+          <option value="scheduled">Scheduled</option>
+          <option value="live">Live</option>
+          <option value="finished">Finished</option>
+        </select>
+        <Button type="submit" size="sm" variant="secondary" disabled={disabled}>
+          Save
+        </Button>
       </div>
-      <Input
-        name="home_score"
-        type="number"
-        min={0}
-        defaultValue={match.home_score ?? ""}
-        className="w-14 h-8"
-        disabled={!match.home_team_id || !match.away_team_id}
-      />
-      <Input
-        name="away_score"
-        type="number"
-        min={0}
-        defaultValue={match.away_score ?? ""}
-        className="w-14 h-8"
-        disabled={!match.home_team_id || !match.away_team_id}
-      />
-      <select
-        name="status"
-        defaultValue={match.status}
-        className="h-8 rounded-md border border-input bg-transparent px-2 text-xs"
-      >
-        <option value="scheduled">Scheduled</option>
-        <option value="live">Live</option>
-        <option value="finished">Finished</option>
-      </select>
-      <Button type="submit" size="sm" variant="secondary" disabled={!match.home_team_id || !match.away_team_id}>
-        Save
-      </Button>
     </form>
   );
 }
@@ -96,7 +146,10 @@ export default async function AdminDashboardPage() {
             </h2>
             <div className="flex flex-col gap-1">
               {stageMatches.map((m) => (
-                <MatchRow key={`${m.id}-${m.home_score}-${m.away_score}-${m.status}`} match={m} />
+                <MatchRow
+                  key={`${m.id}-${m.home_score}-${m.away_score}-${m.home_pen}-${m.away_pen}-${m.status}`}
+                  match={m}
+                />
               ))}
             </div>
           </div>
